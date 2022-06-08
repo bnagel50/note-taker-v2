@@ -2,7 +2,7 @@ const express = require('express');
 const uniqid = require('uniqid');
 const fs = require('fs');
 const path = require('path');
-const note = require('./develop/db/db.json')
+const api = require('./develop/routes')
 
 const PORT = process.env.PORT || 3001;
 const app = express();
