@@ -11,50 +11,42 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static('public'));
 
-app.get('*', (req, res) => 
+app.get('/', (req, res) => 
     res.sendFile(path.join(__dirname, '/develop/public/index.html'))
 );
 
 app.get('/notes', (req, res) => 
-    res.sendFile(path.join(__dirname, '/develop/public/notes.html'))
+res.sendFile(path.join(__dirname, '/develop/public/notes.html'))
 );
 
+
 app.get('/api/notes', (req, res) => {
-        fs.readFile('./db/db.json', 'utf8', (err, data) => {
-            if (err) {
-                console.error(err)
-            } else {
-                const parsedData = JSON.parse(data);
-                res.json(parsedData);
-            }
-        })
+    fs.readFile('./develop/db/db.json', 'utf8', (err, data) => {
+        if (err) {
+            console.error(err)
+        } else {
+            const parsedData = JSON.parse(data);
+            res.json(parsedData);
+        }
+    })
 });
 
 app.post('/api/notes', (req, res) => {
-    const { title, text } = req.body;
+    const note = JSON.parse(fs.readFileSync('./develop/db/db.json'));
     
-    const newNote = {
-          title,
-          text,
-          note_id: uniqid(),
-    };
+    const newNote = req.body;
+        newNote.id = uniqid();
+    
+    note.push(newNote);
+    fs.writeFileSync('./develop/db/db.json', JSON.stringify(note));
+    res.json(note);
+});
+    
+    
 
-        fs.readFile('./db/db.json', 'utf8', (err, data) => {
-            if (err) {
-              console.error(err);
-            } else {
-              const parsedData = JSON.parse(data);
-              parsedData.push(newNote);
-              fs.writeFile('./db/db.json', JSON.stringify(parsedData), (err) => err ? console.error(err) : console.info('Data written to database!'));
-            }
-          });
-
-    const response = {
-        status: 'success',
-        body: newNote,
-    };
-    res.json(response);
-})
+app.get('*', (req, res) => 
+    res.sendFile(path.join(__dirname, '/develop/public/index.html'))
+);
 
 app.listen(PORT, () => {
     console.log(`This server is listening on ${PORT}!`);
