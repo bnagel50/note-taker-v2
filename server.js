@@ -2,14 +2,13 @@ const express = require('express');
 const uniqid = require('uniqid');
 const fs = require('fs');
 const path = require('path');
-const api = require('./develop/public/assets/js/index.js')
+const api = require('./develop/db/db.json')
 
 const PORT = process.env.PORT || 3001;
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/api', api);
 
 app.use(express.static('public'));
 
